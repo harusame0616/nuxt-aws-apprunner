@@ -1,59 +1,60 @@
-type Todo = {
-  id: string;
-  title: string;
-  completeDate?: Date;
-};
+import type { GetTodoListResponse } from "../../api/dist/todo/todo.controller";
 
 export const useTodo = () => {
-  const todos = ref<Todo[]>([]);
+  const apiBaseUrl = useRuntimeConfig().public.apiBaseUrl;
+  const todoApi = apiBaseUrl + "/todos";
 
-  const addTodo = (title: string) => {
-    todos.value.push({
-      id: crypto.randomUUID(),
-      title,
+  const { data: todoListResponse, refresh } =
+    useLazyFetch<GetTodoListResponse>(todoApi);
+
+  const addTodo = async (title: string) => {
+    await $fetch(todoApi, { method: "POST", body: { title } });
+    await refresh();
+  };
+
+  const finishTodo = async (id: string) => {
+    const completeTime = new Date();
+    console.log("finish");
+    await $fetch(todoApi + `/${id}/complete`, {
+      method: "PUT",
+      query: { completeTime: completeTime.toDateString() },
     });
+    await refresh();
   };
 
-  const finishTodo = (id: string) => {
-    const index = todos.value.findIndex((todo) => todo.id === id);
-    if (index < 0) {
-      throw new Error("該当のTODOが見つかりません");
+  const openTodo = async (id: string) => {
+    await $fetch(todoApi + `/${id}/complete`, {
+      method: "PUT",
+      query: { completeTime: null },
+    });
+    await refresh();
+  };
+  const todos = computed(() => todoListResponse.value?.todoList ?? []);
+
+  const toggleComplete = async (id: string) => {
+    if (!todos.value) {
+      throw new Error("読み込み中です");
     }
-    todos.value[index].completeDate = new Date();
-  };
 
-  const openTodo = (id: string) => {
-    const index = todos.value.findIndex((todo) => todo.id === id);
-    if (index < 0) {
-      throw new Error("該当のTODOが見つかりません");
-    }
-    todos.value[index].completeDate = undefined;
-  };
-
-  const toggleComplete = (id: string) => {
     const index = todos.value.findIndex((todo) => todo.id === id);
     if (index < 0) {
       throw new Error("該当のTODOが見つかりません");
     }
 
     if (todos.value[index].completeDate) {
-      finishTodo(id);
+      await openTodo(id);
     } else {
-      openTodo(id);
+      await finishTodo(id);
     }
   };
 
-  const removeTodo = (id: string) => {
-    const index = todos.value.findIndex((todo) => todo.id === id);
-    if (index < 0) {
-      throw new Error("該当のTODOが見つかりません");
-    }
-
-    todos.value.splice(index, 1);
+  const removeTodo = async (id: string) => {
+    await $fetch(todoApi + `/${id}`, { method: "DELETE" });
+    await refresh();
   };
 
   return {
-    todos: readonly(todos),
+    todos,
     addTodo,
     finishTodo,
     openTodo,

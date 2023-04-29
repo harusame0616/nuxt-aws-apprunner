@@ -16,6 +16,7 @@ import { TodoListUsecase } from './usecases/todoListUsecase.ts';
 import { TodoRemoveUsecase } from './usecases/todoRemoveUsecase';
 import { TodoReopenUsecase } from './usecases/todoReopenUsecase';
 
+export type GetTodoListResponse = { todoList: TodoDto[] };
 @Controller('/todos')
 export class TodoController {
   constructor(
@@ -28,7 +29,7 @@ export class TodoController {
   ) {}
 
   @Get()
-  async getTodoList(): Promise<{ todoList: TodoDto[] }> {
+  async getTodoList(): Promise<GetTodoListResponse> {
     const todoList = await this.todoListUsecase.execute();
     return { todoList: todoList };
   }
