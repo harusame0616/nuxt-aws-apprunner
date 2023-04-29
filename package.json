@@ -3,13 +3,14 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --host 0.0.0.0",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
     "@types/node": "^18",
-    "nuxt": "^3.4.2"
+    "//": "3.4.2 でエラーが出るため固定 https://github.com/nuxt/nuxt/issues/20446",
+    "nuxt": "3.4.1"
   }
 }
