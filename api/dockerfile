@@ -6,15 +6,17 @@ COPY ./package*.json ./
 COPY ./yarn.lock ./
 RUN yarn
 COPY ./ ./
-CMD ["yarn", "dev"]
+CMD ["yarn", "start:dev"]
 
-FROM dev AS build
+FROM dev as BUILD
 
 RUN yarn build
+RUN NODE_ENV=production yarn install
 
 FROM node:16-alpine AS production
 
 USER node
 WORKDIR /app
-COPY --from=BUILD /app/.output/*  ./
-CMD ["node", "./index.mjs"]
+COPY --from=BUILD /app/dist/ ./
+COPY --from=BUILD /app/node_modules ./node_modules
+CMD ["node", "./main.js"]
