@@ -38,10 +38,10 @@ const onDeleteClick = (id: string) => {
           >
             <input
               type="checkbox"
-              :value="!!todo.completeDate"
+              :checked="!!todo.completeDate"
               @change="onCheckboxChange(todo.id)"
               :id="todo.id"
-            /><label :for="todo.id">{{ todo.title }}</label>
+            /><label :for="todo.id" class="label">{{ todo.title }}</label>
             <button type="button" @click="onDeleteClick(todo.id)">
               削除する
             </button>
@@ -55,5 +55,18 @@ const onDeleteClick = (id: string) => {
 <style scoped>
 .completed {
   text-decoration: line-through;
+}
+
+input[type="checkbox"] {
+  cursor: pointer;
+}
+button {
+  cursor: pointer;
+}
+.label {
+  display: inline-block;
+  min-width: 40px;
+  margin-right: 20px;
+  cursor: pointer;
 }
 </style>
