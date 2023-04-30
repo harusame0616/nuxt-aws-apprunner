@@ -1,0 +1,31 @@
+version: "3.7"
+
+volumes:
+  APP_NODE_MODULES:
+  APP_DOT_NUXT:
+  API_NODE_MODULES:
+
+
+services:
+  app:
+    build:
+      context: ./app
+      target: dev
+    ports:
+       - 3000:3000
+       - 24678:24678
+    volumes:
+      - ./app:/app
+      - APP_NODE_MODULES:/app/node_modules
+      - APP_DOT_NUXT:/app/.nuxt
+    container_name:  nuxt-aws-apprunner-app
+  api:
+    build:
+      context: ./api
+      target: dev
+    ports:
+       - 4000:4000
+    volumes:
+      - ./api:/api
+      - API_NODE_MODULES:/app/node_modules
+    container_name:  nuxt-aws-apprunner-api
