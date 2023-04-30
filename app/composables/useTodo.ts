@@ -1,8 +1,7 @@
 import type { GetTodoListResponse } from "../../api/dist/todo/todo.controller";
 
 export const useTodo = () => {
-  const apiBaseUrl = useRuntimeConfig().public.apiBaseUrl;
-  const todoApi = apiBaseUrl + "/todos";
+  const todoApi = useNuxtApp().$apiBaseUrl + "/todos";
 
   const { data: todoListResponse, refresh } =
     useLazyFetch<GetTodoListResponse>(todoApi);
