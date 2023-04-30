@@ -9,8 +9,8 @@ export type TodoDto = {
 export class Todo {
   private data: TodoDto;
 
-  private constructor(private todoDto: TodoDto) {
-    this.data = structuredClone(todoDto);
+  private constructor(todoDto: TodoDto) {
+    this.data = { ...todoDto };
   }
 
   static create(title: string) {
@@ -37,6 +37,6 @@ export class Todo {
   }
 
   toDto() {
-    return structuredClone(this.data);
+    return { ...this.data };
   }
 }
