@@ -1,22 +1,21 @@
 FROM node:16-alpine AS dev
 
 USER node
-WORKDIR /app
-COPY ./package*.json ./
-COPY ./yarn.lock ./
-RUN yarn
-COPY ./ ./
+WORKDIR /api
 CMD ["yarn", "start:dev"]
 
 FROM dev as BUILD
 
 RUN yarn build
+COPY ./package*.json ./
+COPY ./yarn.lock ./
 RUN NODE_ENV=production yarn install
+COPY ./ ./
 
 FROM node:16-alpine AS production
 
 USER node
-WORKDIR /app
-COPY --from=BUILD /app/dist/ ./
-COPY --from=BUILD /app/node_modules ./node_modules
+WORKDIR /api
+COPY --from=BUILD /api/dist/ ./
+COPY --from=BUILD /api/node_modules ./node_modules
 CMD ["node", "./main.js"]
