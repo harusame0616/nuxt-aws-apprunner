@@ -1,3 +1,5 @@
+import * as crypto from 'crypto';
+
 export type TodoDto = {
   id: string;
   title: string;
